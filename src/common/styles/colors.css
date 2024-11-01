@@ -1,0 +1,32 @@
+:root {
+  --color-primary: #090d1f;
+  --yellow-primary: #faa41d;
+  --white: #eaeaea;
+  --black: #000000;
+  --charcoal: #2a2a2a;
+  --success: #52c41a;
+  --error: #ff4d4f;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+html[data-theme='dark'] {
+  background-color: var(--color-primary);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 12px;
+}
+
+.ant-select-selector {
+  background: transparent !important;
+}
+
+.ant-dropdown ul {
+  border: 1px solid var(--yellow-primary);
+}
