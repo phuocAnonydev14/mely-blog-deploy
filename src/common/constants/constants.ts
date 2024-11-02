@@ -7,4 +7,4 @@ export const breakpoints = {
   xxl: '1600px',
 };
 
-export const BASE_URL = 'http://localhost:3001/api/v1';
+export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001/api/v1';
