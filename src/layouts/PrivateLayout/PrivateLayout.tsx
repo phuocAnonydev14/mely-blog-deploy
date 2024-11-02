@@ -4,8 +4,8 @@ import { PropsWithChildren, useEffect } from 'react';
 import { LOGIN } from '@/common/constants/path.constant';
 import { ENotification } from '@/common/utils/notification.util';
 import { notification } from 'antd';
+import Header from '@/components/layout/Header';
 import useUser from '@/hooks/useUser';
-import {Header} from "@/components/layout/Header/Header";
 
 export default function PrivateLayout({ children }: PropsWithChildren) {
   const { isLoggedIn, isLoading } = useUser();

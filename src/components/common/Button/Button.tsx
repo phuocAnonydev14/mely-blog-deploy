@@ -17,7 +17,7 @@ export interface IButtonProps extends ComponentProps<typeof AntButton> {
 
 export default function Button({
   type = 'primary',
-  color = EButtonTheme.DEFAULT ,
+  color = EButtonTheme.DEFAULT,
   className,
   children,
   ...rest

@@ -13,7 +13,7 @@ import BtnActionGroup from '@/components/layout/Header/BtnActionGroup/BtnActionG
 
 // TODO: Handle responsive design for the header
 // * The current column span works well for large screens (i.e. 992px and above)
-export const Header = () => {
+const Header = () => {
   const isMobile = useMediaQuery(`(max-width:${breakpoints.md})`);
   const [openDrawer, setOpenDrawer] = useState(false);
 
@@ -49,3 +49,5 @@ export const Header = () => {
     </HeaderStyle>
   );
 };
+
+export default Header;

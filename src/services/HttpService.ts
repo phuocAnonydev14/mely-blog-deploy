@@ -90,7 +90,7 @@ class HttpService {
         url,
         ...options,
       });
-      return response?.data;
+      return response.data;
     } catch (error) {
       return this.normalizeError(error);
     }
@@ -106,10 +106,10 @@ class HttpService {
     return this.request<T>(EHttpMethod.GET, url, {
       params,
       headers: await this.setupHeaders(false, isPublicApi),
-      cache: useCache && {
-        ttl: 1000 * 5,
-        staleIfError: true, // use cache if there's an error
-      },
+      // cache: useCache && {
+      // ttl: 1000 * 5,
+      // staleIfError: true, // use cache if there's an error
+      // },
     });
   }
 

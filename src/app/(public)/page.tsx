@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import blogApiService from '@/services/BlogService';
 import Head from 'next/head';
 import Home from '@/components/page/home';
+import { Blog } from '@/common/@types/blog.type';
 
 export const metadata: Metadata = {
   title: 'Mely Blog',
@@ -25,7 +26,11 @@ export default async function HomePage() {
 
   return (
     <>
-      <Home blogs={blogs?.data} pagination={blogs?.meta?.pagination} trendingBlog={trendingBlog.data} />
+      <Home
+        blogs={blogs?.data as Blog[]}
+        pagination={blogs?.meta?.pagination}
+        trendingBlog={trendingBlog.data}
+      />
     </>
   );
 }

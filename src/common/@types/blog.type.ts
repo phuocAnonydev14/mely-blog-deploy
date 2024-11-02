@@ -15,6 +15,12 @@ export interface Blog extends CommonFields {
   votes?: BlogVote;
 }
 
+export enum BlogVoteActionEnum {
+  UP_VOTE = '0',
+  DOWN_VOTE = '1',
+  CANCEL = '2',
+}
+
 export interface BlogVote {
   upVote: number;
   downVote: number;
