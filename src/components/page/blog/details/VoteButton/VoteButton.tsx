@@ -16,7 +16,7 @@ export default function VoteButton({ votes, blogId }: Partial<Blog>) {
   const [voteCount, setVoteCount] = useState(0);
   const [isUpvoted, setIsUpvoted] = useState(false);
   const [isDownvoted, setIsDownvoted] = useState(false);
-  const [userStatus, setUserStatus] = useState<VoteAction | null>(votes?.userStatus as VoteAction);
+  const [userStatus, setUserStatus] = useState<VoteAction | null>((votes?.userStatus as VoteAction) || null);
   const { isLoggedIn } = useUser();
   const [openLoginModal, setOpenLoginModal] = useState(false);
 
