@@ -16,7 +16,7 @@ export default function VoteButton({ votes, blogId }: Partial<Blog>) {
   const [voteCount, setVoteCount] = useState(0);
   const [isUpvoted, setIsUpvoted] = useState(false);
   const [isDownvoted, setIsDownvoted] = useState(false);
-  const [userStatus, setUserStatus] = useState<VoteAction | null>((votes?.userStatus as VoteAction) || null);
+  const [userStatus, setUserStatus] = useState<VoteAction | null>((votes?.userStatus as any) || null);
   const { isLoggedIn } = useUser();
   const [openLoginModal, setOpenLoginModal] = useState(false);
 
@@ -70,8 +70,8 @@ export default function VoteButton({ votes, blogId }: Partial<Blog>) {
 
   useEffect(() => {
     setVoteCount((votes?.upVote || 0) - (votes?.downVote || 0));
-    setIsUpvoted(votes?.userStatus == BlogVoteActionEnum.UP_VOTE);
-    setIsDownvoted(votes?.userStatus == BlogVoteActionEnum.DOWN_VOTE);
+    setIsUpvoted(votes?.userStatus == (BlogVoteActionEnum.UP_VOTE as any));
+    setIsDownvoted(votes?.userStatus == (BlogVoteActionEnum.DOWN_VOTE as any));
   }, []);
 
   return (
