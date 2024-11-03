@@ -188,6 +188,10 @@ class HttpService {
 
         if (statusCode === 500) {
           console.error('Internal Server Error');
+          deleteCookie(EToken.USER_TOKEN);
+          deleteCookie(EToken.USER_ID);
+          deleteCookie(EToken.ACCESS_TOKEN);
+          deleteCookie(EToken.REFRESH_TOKEN);
         }
         return this.normalizeError(error);
       },
