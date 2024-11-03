@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import userService, { IUser } from '@/services/UserService';
 import { ENotification, openNotification } from '@/common/utils/notification.util';
 import useUser from '@/hooks/useUser';
+import { deleteCookie } from 'cookies-next';
+import { EToken } from '@/common/enums/app.enum';
 
 export const useActionProfile = () => {
   const [user, setUser] = useState<IUser>();
@@ -14,6 +16,10 @@ export const useActionProfile = () => {
       setUser(data);
     } catch (e) {
       console.log(e);
+      deleteCookie(EToken.USER_TOKEN);
+      deleteCookie(EToken.USER_ID);
+      deleteCookie(EToken.ACCESS_TOKEN);
+      deleteCookie(EToken.REFRESH_TOKEN);
     } finally {
       setIsLoading(false);
     }
