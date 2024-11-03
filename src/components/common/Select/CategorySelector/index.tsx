@@ -58,8 +58,8 @@ export const CategorySelector = (props: CategorySelectorProps) => {
         tagRender={TagSelector}
         style={{ width: '100%' }}
         options={categories.map(({ categoryId, iconCode, name }) => ({
-          value: categoryId,
-          label: `${iconCode} ${name}`,
+          value: name,
+          label: name,
         }))}
       />
     </div>

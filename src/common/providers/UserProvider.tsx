@@ -23,6 +23,7 @@ export default function UserProvider({ children }: PropsWithChildren) {
         setCookie(EToken.USER_ID, user.uid);
         setCookie(EToken.REFRESH_TOKEN, user.refreshToken);
         const resp = await userApi.getProfile();
+        console.log(resp.data);
         setUser(resp.data);
         setIsLoggedIn(true);
       } else {

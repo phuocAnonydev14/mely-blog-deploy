@@ -30,7 +30,9 @@ export default function Profile({ userId }: ProfileProps) {
     (async () => {
       if (isLoading) return;
 
-      if (currentSignedInUser && (currentSignedInUser.userId === userId || userId === 'me')) {
+      console.log('currentSignedInUser', currentSignedInUser);
+
+      if (currentSignedInUser && (currentSignedInUser.uid === userId || userId === 'me')) {
         setUser(currentSignedInUser);
         setIsOwner(true);
         return;
