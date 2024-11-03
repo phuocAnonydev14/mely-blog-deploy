@@ -106,10 +106,10 @@ class HttpService {
     return this.request<T>(EHttpMethod.GET, url, {
       params,
       headers: await this.setupHeaders(false, isPublicApi),
-      cache: useCache && {
-        ttl: 1000,
-        staleIfError: true, // use cache if there's an error
-      },
+      // cache: useCache && {
+      //   ttl: 1000,
+      //   staleIfError: true, // use cache if there's an error
+      // },
     });
   }
 
