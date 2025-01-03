@@ -13,6 +13,7 @@ import VoteButton from '@/components/page/blog/details/VoteButton';
 import useBlog from '@/hooks/useBlog';
 import { EToken } from '@/common/enums/app.enum';
 import { getCookie } from 'cookies-next';
+import { BookmarkAction } from '@/components/page/blog/details/BlogActions/BookmarkAction';
 
 interface BlogActionsProps {
   layout?: 'vertical' | 'horizontal';
@@ -20,11 +21,9 @@ interface BlogActionsProps {
 
 export default function BlogActions({ layout = 'vertical' }: BlogActionsProps) {
   const { blog } = useBlog();
-  const shareButtonRef = useRef<HTMLElement>(null);
+  const shareButtonRef = useRef<HTMLElement | null>(null);
   const isMobile = useMediaQuery(`(max-width:${breakpoints.md})`);
   const userId = getCookie(EToken.USER_ID);
-
-  console.log('blog', blog);
 
   const handleJumpToComments = () => {
     const commentsSectionTopPosition = document.querySelector('.blog-comments')?.getBoundingClientRect().top;
@@ -42,7 +41,7 @@ export default function BlogActions({ layout = 'vertical' }: BlogActionsProps) {
   return (
     <BlogActionsStyle>
       <div className='blog-actions' style={{ flexDirection: layout === 'horizontal' ? 'row' : 'column' }}>
-        {userId === blog.user?.userId && (
+        {userId === blog.user?.uid && (
           <Tooltip placement='left' title='Edit this blog'>
             <Link href={`${AppRoutes.BLOG_EDIT}/${blog.blogId}`}>
               <EditOutlined className='blog-actions-edit' />
@@ -55,8 +54,14 @@ export default function BlogActions({ layout = 'vertical' }: BlogActionsProps) {
         </Tooltip>
         <Tooltip placement='left' title='Share via...'>
           <ShareAltOutlined className='blog-actions-share' ref={shareButtonRef} />
-          <ShareBlogModal triggerOpenElementRef={shareButtonRef} />
+          <ShareBlogModal triggerOpenElementRef={shareButtonRef as any} />
         </Tooltip>
+        {/*<Tooltip placement='left' title='Add to bookmark'>*/}
+        {/*  <Link href={AppRoutes.BLOG_REPORT}>*/}
+        {/*    <BookmarkIcon className='blog-actions-report' />*/}
+        {/*  </Link>*/}
+        {/*</Tooltip>*/}
+        <BookmarkAction />
         <Tooltip placement='left' title='Report this blog'>
           <Link href={AppRoutes.BLOG_REPORT}>
             <FlagOutlined className='blog-actions-report' />

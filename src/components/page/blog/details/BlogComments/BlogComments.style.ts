@@ -28,6 +28,10 @@ const BlogCommentsStyle = styled.div`
   }
 
   .blog-comments-form {
+    margin-top: 1.4rem;
+  }
+
+  .comments-textarea {
     margin-block: 3rem;
   }
 `;

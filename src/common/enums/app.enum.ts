@@ -34,19 +34,6 @@ export enum SocialLink {
 
 export const SIDEBAR: ISidebar[] = [
   {
-    title: 'Squads',
-    subnav: [
-      {
-        title: 'Public Squads',
-        icon: UsergroupAddOutlined,
-      },
-      {
-        title: 'New Squad',
-        icon: FileAddOutlined,
-      },
-    ],
-  },
-  {
     title: 'Discover',
     subnav: [
       {
@@ -67,57 +54,57 @@ export const SIDEBAR: ISidebar[] = [
       },
     ],
   },
-  {
-    title: 'Contribute',
-    subnav: [
-      {
-        title: 'Submit article',
-        icon: PaperClipOutlined,
-      },
-      {
-        title: 'Suggest new source',
-        icon: DragOutlined,
-      },
-    ],
-  },
-  {
-    title: 'Manage',
-    subnav: [
-      {
-        title: 'Bookmarks',
-        icon: BlockOutlined,
-      },
-      {
-        title: 'Reading history',
-        icon: EyeOutlined,
-      },
-      {
-        title: 'Customize',
-        icon: SettingOutlined,
-      },
-    ],
-  },
-  {
-    title: '',
-    subnav: [
-      {
-        title: 'Docs',
-        icon: BookOutlined,
-      },
-      {
-        title: 'Changelog',
-        icon: RedoOutlined,
-      },
-      {
-        title: 'Feedback',
-        icon: CopyOutlined,
-      },
-      {
-        title: 'Invite people',
-        icon: ShareAltOutlined,
-      },
-    ],
-  },
+  // {
+  //   title: 'Contribute',
+  //   subnav: [
+  //     {
+  //       title: 'Submit article',
+  //       icon: PaperClipOutlined,
+  //     },
+  //     {
+  //       title: 'Suggest new source',
+  //       icon: DragOutlined,
+  //     },
+  //   ],
+  // },
+  // {
+  //   title: 'Manage',
+  //   subnav: [
+  //     {
+  //       title: 'Bookmarks',
+  //       icon: BlockOutlined,
+  //     },
+  //     {
+  //       title: 'Reading history',
+  //       icon: EyeOutlined,
+  //     },
+  //     {
+  //       title: 'Customize',
+  //       icon: SettingOutlined,
+  //     },
+  //   ],
+  // },
+  // {
+  //   title: '',
+  //   subnav: [
+  //     {
+  //       title: 'Docs',
+  //       icon: BookOutlined,
+  //     },
+  //     {
+  //       title: 'Changelog',
+  //       icon: RedoOutlined,
+  //     },
+  //     {
+  //       title: 'Feedback',
+  //       icon: CopyOutlined,
+  //     },
+  //     {
+  //       title: 'Invite people',
+  //       icon: ShareAltOutlined,
+  //     },
+  //   ],
+  // },
 ] as const;
 
 export enum EAuthProvider {

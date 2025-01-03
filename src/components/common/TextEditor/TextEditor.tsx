@@ -60,7 +60,6 @@ function TextEditor({ content, setContent }: TextEditorProps, ref: ForwardedRef<
   return (
     <TextEditorStyle>
       <CKEditor
-        data={content}
         onChange={(_, editor) => setContent(editor.getData())}
         editor={ClassicEditor}
         config={{

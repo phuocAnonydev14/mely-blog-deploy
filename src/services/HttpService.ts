@@ -3,7 +3,7 @@ import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
 import { deleteCookie, getCookie } from 'cookies-next';
 import { EHttpMethod, EToken } from '@/common/enums/app.enum';
 import axiosRetry from 'axios-retry';
-import { CacheRequestConfig, setupCache } from 'axios-cache-interceptor';
+import { AxiosCacheInstance, CacheRequestConfig, setupCache } from 'axios-cache-interceptor';
 import { jwtDecode } from 'jwt-decode';
 import { authService } from '@/services/auth.service';
 
@@ -30,10 +30,7 @@ class HttpService {
         withCredentials: false,
         timeout: 5000,
       }),
-      {
-        ttl: 1000, // 5s cache
-      },
-    );
+    ) as any;
 
     this.injectInterceptors();
   }
@@ -84,16 +81,12 @@ class HttpService {
     url: string,
     options: AxiosRequestConfig | CacheRequestConfig,
   ): Promise<T> {
-    try {
-      const response: AxiosResponse<T> = await this.http.request<T>({
-        method,
-        url,
-        ...options,
-      });
-      return response.data;
-    } catch (error) {
-      return this.normalizeError(error);
-    }
+    const response: AxiosResponse<T> = await this.http.request<T>({
+      method,
+      url,
+      ...options,
+    });
+    return response.data;
   }
 
   // Perform GET request
@@ -106,10 +99,10 @@ class HttpService {
     return this.request<T>(EHttpMethod.GET, url, {
       params,
       headers: await this.setupHeaders(false, isPublicApi),
-      // cache: useCache && {
-      //   ttl: 1000,
-      //   staleIfError: true, // use cache if there's an error
-      // },
+      cache: useCache && {
+        ttl: 1000,
+        staleIfError: true, // use cache if there's an error
+      },
     });
   }
 
@@ -145,7 +138,7 @@ class HttpService {
     this.http.interceptors.request.use(async (request) => {
       // @TODO: implement an NProgress
       const accessToken = getCookie(EToken.ACCESS_TOKEN) || '';
-      if (accessToken && isTokenExpired(accessToken)) {
+      if (accessToken && isTokenExpired(accessToken as string)) {
         deleteCookie(EToken.ACCESS_TOKEN);
         await authService.refreshToken();
       }

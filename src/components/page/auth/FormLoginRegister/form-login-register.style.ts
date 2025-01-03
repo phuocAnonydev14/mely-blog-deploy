@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 import { PRIMARY_COLOR } from '@/common/constants/color.constant';
 
-export const FormLoginRegisterStyle = styled('div')<{ $height?: string }>`
-  height: ${(props) => props.$height || '100dvh'};
+export const FormLoginRegisterStyle = styled('div')<any>`
+  height: ${(props: { $height: string }) => props.$height || '100dvh'};
 
   background-image: ${(props) =>
-    props.$height ? 'auto' : 'linear-gradient(135deg, ${PRIMARY_COLOR}, #1f2233, #484a58)'};
+    props.$height === 'auto' ? 'auto' : `linear-gradient(135deg, ${PRIMARY_COLOR}, #1f2233, #484a58)`};
   display: flex;
   justify-content: center;
   align-items: center;

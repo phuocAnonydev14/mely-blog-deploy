@@ -31,7 +31,6 @@ const handleFetchBlogWithLinkRef = async (link: string) => {
 
 const BlogItem = (props: Props) => {
   const { dir, post } = props;
-  console.log(post);
 
   const { blogId, content, title, blogTypeCode, categories, image, createTimestamp, description } = post;
 
@@ -126,7 +125,7 @@ export default BlogItem;
 export const MapCategoriesTag = ({ categories }: { categories: Category[] }) => {
   return (
     <div className='flex gap-2 mt-1 flex-wrap'>
-      {categories.map((category, index) => {
+      {categories?.map((category, index) => {
         if (!category.categoryId) return;
         return (
           <Tag

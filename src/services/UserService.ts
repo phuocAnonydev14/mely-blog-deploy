@@ -1,9 +1,8 @@
-'use client';
-
 import HttpService from '@/services/HttpService';
 import { ResponseData } from '@/common/@types/app.type';
 import { EAuthProvider } from '@/common/enums/app.enum';
 import { EGender } from '@/common/enums/gender.enum';
+import { BookmarkCategory } from '@/common/@types/boomark.type';
 
 export interface IUser {
   userId: string;
@@ -26,11 +25,27 @@ export interface IUser {
   isActive: boolean;
   uid: string;
   userRoles: any;
+  blogsCount: number;
+}
+
+interface GetAllUsersParams {
+  page?: string;
+  pageSize?: string;
+  fullName?: string;
+}
+
+export interface IAddBookmarkCategory {
+  bookmarkCategoryName: string;
+  description: string;
 }
 
 class UserApiService extends HttpService {
   constructor() {
     super();
+  }
+
+  getAllUsers(params: GetAllUsersParams) {
+    return this.get<ResponseData<IUser[]>>(`/users`, params, true, false);
   }
 
   getUser(id: string) {
@@ -47,6 +62,30 @@ class UserApiService extends HttpService {
 
   async checkOwner(userId: string) {
     return this.get<ResponseData<boolean>>(`/auth/owner/${userId}`, {}, false);
+  }
+
+  async getBookmarkCategories() {
+    return this.get<ResponseData<BookmarkCategory[]>>(`/bookmark-categories`, {}, false);
+  }
+
+  async addBookmarkCategory(payload: IAddBookmarkCategory) {
+    return this.post<ResponseData<any>, typeof payload>(`/bookmark-categories`, payload, {}, false);
+  }
+
+  async deleteBookmarkCategory(bookmarkCategoryId: string) {
+    return this.remove<ResponseData<any>>(`/bookmark-categories/${bookmarkCategoryId}`, {}, false);
+  }
+
+  async getBookmarkCategoryDetail(bookmarkCategoryId: string) {
+    return this.get<ResponseData<BookmarkCategory>>(`/bookmark-categories/${bookmarkCategoryId}`, {}, false);
+  }
+
+  async addBookmark(blogId: string, bookmarkCategoryId: string) {
+    return this.post<ResponseData<any>, any>(`/blog-bookmark/${blogId}`, { bookmarkCategoryId }, {}, false);
+  }
+
+  async deleteBookmark(blogId: string) {
+    return this.remove<ResponseData<any>>(`/blog-bookmark/${blogId}`, {}, false);
   }
 }
 

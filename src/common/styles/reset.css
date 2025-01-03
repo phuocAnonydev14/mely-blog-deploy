@@ -157,3 +157,10 @@ code {
 .ant-dropdown ul {
   border: 1px solid white !important;
 }
+
+.ant-select-dropdown {
+  padding: 0 !important;
+}
+.ant-dropdown-menu-item .anticon {
+  font-size: 1.6rem !important;
+}

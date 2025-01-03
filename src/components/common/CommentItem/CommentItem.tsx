@@ -1,54 +1,60 @@
 import { Comment } from '@/common/@types/blog.type';
 import CommentItemStyle from '@/components/common/CommentItem/CommentItem.style';
-import { Button, Card, Modal, Tooltip } from 'antd';
+import { Button, Card, Flex, Modal, Tooltip } from 'antd';
 import {
   CommentOutlined,
   CaretDownOutlined as DownvoteButton,
   CaretUpOutlined as UpvoteButton,
-  DeleteOutlined,
-  FlagOutlined,
   DownOutlined,
-  EditOutlined,
+  UpOutlined,
 } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
+import { MessageCircle, MessageCircleMore, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { ForwardedRef, forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import clsx from 'clsx';
-import useBlog from '@/hooks/useBlog';
 import CommentList from '@/components/common/CommentList';
 import blogApiService from '@/services/BlogService';
 import CommentTextarea from '@/components/common/CommentTextarea';
 import useUser from '@/hooks/useUser';
 import { VoteAction, VoteUserStatus } from '@/common/enums/blog.enum';
-import { useRouter } from 'next/navigation';
-import { AppRoutes } from '@/app/routes';
 import useAntMessage from '@/hooks/useAntMessage';
 import formateDateTimeByLocale from '@/helpers/formatDateTimeByLocale';
-import { BlogCommentOrder } from '@/common/enums/blog-comment-order.enum';
+import { CommentListRef } from '@/components/common/CommentList/CommentList';
 import LoadingIndicator from '@/components/common/Icon/LoadingIndicator';
+import { AuthModal } from '@/components/page/auth/AuthModal';
+import CommentItemMoreActions from '@/components/common/CommentItem/CommentItemMoreActions';
 
-interface CommentProps {
+interface CommentItemProps {
   comment: Comment;
-  onReloadReplies?: () => Promise<void>;
+  disabled?: boolean;
+  onDeleted: (commentId: string) => void;
+  onReplySuccess?: (comment: Comment) => void;
+  onUpdateComment?: (comment: Comment) => void;
 }
 
-const MAX_COMMENTS_PER_PAGE = 10;
+export interface CommentItemRef {
+  clearReplies: () => void;
+}
 
-export default function CommentItem({ comment, onReloadReplies }: CommentProps) {
-  const [commentData, setCommentData] = useState<Comment>(comment);
+function CommentItem(
+  { comment, disabled, onDeleted, onReplySuccess, onUpdateComment }: CommentItemProps,
+  ref: ForwardedRef<CommentItemRef>,
+) {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
+  const [isRepliesHidden, setIsRepliesHidden] = useState(false);
   const [isLoadingReplies, setIsLoadingReplies] = useState(false);
-  const [replies, setReplies] = useState<Comment[]>([]);
-  const [canLoadMoreReplies, setCanLoadMoreReplies] = useState(comment.countReplies > MAX_COMMENTS_PER_PAGE);
-  const [nextPageToLoadReplies, setNextPageToLoadReplies] = useState(1);
   const [isEditing, setIsEditing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-  const { blog, setRootComments } = useBlog();
-  const { user, isLoggedIn } = useUser();
-  const router = useRouter();
+  const [openLoginModal, setOpenLoginModal] = useState(false);
+  const { isLoggedIn } = useUser();
   const messageApi = useAntMessage();
+  const repliesListRef = useRef<CommentListRef>(null);
 
   const handleToggleReplyForm = () => {
+    if (isVoting) return;
+
     if (showReplyForm) {
       handleCloseReplyForm();
       return;
@@ -62,22 +68,21 @@ export default function CommentItem({ comment, onReloadReplies }: CommentProps) 
   };
 
   const handleVoteComment = async (action: VoteAction) => {
-    if (!user) {
-      router.push(AppRoutes.LOGIN);
+    if (isVoting) return;
+
+    if (!isLoggedIn) {
+      setOpenLoginModal(true);
       return;
     }
 
     try {
       setIsVoting(true);
-      if (commentData.votes.userStatus === VoteUserStatus.NONE) {
-        await blogApiService.createCommentVote(commentData.blogCommentId, action);
-      } else await blogApiService.updateCommentVote(commentData.blogCommentId, action);
+      if (comment.votes.userStatus === VoteUserStatus.NONE) {
+        await blogApiService.createCommentVote(comment.blogCommentId, action);
+      } else await blogApiService.updateCommentVote(comment.blogCommentId, action);
 
-      const { data: updatedComment } = await blogApiService.getOneComment(
-        commentData.blogCommentId,
-        !isLoggedIn,
-      );
-      setCommentData((_) => updatedComment);
+      const { data: updatedComment } = await blogApiService.getOneComment(comment.blogCommentId, !isLoggedIn);
+      onUpdateComment?.(updatedComment);
 
       if (action === VoteAction.CANCEL) {
         messageApi.success('Successfully cancelled vote the comment!');
@@ -96,91 +101,96 @@ export default function CommentItem({ comment, onReloadReplies }: CommentProps) 
     setIsVoting(false);
   };
 
-  const handleShowNextPageOfReplies = async (loadFromScratch: boolean = false) => {
-    try {
-      setIsLoadingReplies(true);
-      const res = await blogApiService.getAllComments({
-        blogId: blog.blogId,
-        replyTo: commentData.blogCommentId,
-        order: BlogCommentOrder.CREATE_TIMESTAMP_ASC,
-        page: loadFromScratch ? 1 : nextPageToLoadReplies,
-        pageSize: MAX_COMMENTS_PER_PAGE,
-      });
-      setReplies(loadFromScratch ? res.data : [...replies, ...res.data]);
-      if (res.meta!.pagination.page < res.meta!.pagination.totalPage) {
-        setCanLoadMoreReplies(true);
-        setNextPageToLoadReplies(loadFromScratch ? 2 : nextPageToLoadReplies + 1);
-      } else setCanLoadMoreReplies(false);
-    } catch (error: any) {
-      messageApi.error('Failed to get replies:', error.response?.data?.message);
-    }
+  const handleShowReplies = async () => {
+    setIsLoadingReplies(true);
+    await repliesListRef.current?.showNextPageOfComments(true);
     setIsLoadingReplies(false);
     setShowReplies(true);
   };
 
-  const handleReloadReplies = async () => {
-    await handleShowNextPageOfReplies(true);
+  const toggleRepliesHidden = () => {
+    setIsRepliesHidden(!isRepliesHidden);
   };
 
-  const handleSuccessReply = async () => {
-    if (commentData.replyTo === null) {
-      await handleReloadReplies();
-      return;
+  const handleReplySuccess = async (submittedComment: Comment) => {
+    if (comment.replyTo === null) {
+      repliesListRef.current?.addComment(submittedComment);
     }
 
-    await onReloadReplies?.();
+    onReplySuccess?.(submittedComment);
+
+    if (!showReplies) {
+      await handleShowReplies();
+    }
   };
 
   const handleDeleteComment = async () => {
     try {
       setIsDeleteModalVisible(false);
-      await blogApiService.deleteComment(commentData.blogCommentId);
+      setIsDeleting(true);
+      await blogApiService.deleteComment(comment.blogCommentId);
 
-      if (commentData.replyTo === null) {
-        setRootComments((prevComments) =>
-          prevComments.filter((c) => c.blogCommentId !== commentData.blogCommentId),
-        );
-      } else {
-        await onReloadReplies?.();
-      }
+      onDeleted(comment.blogCommentId);
       messageApi.success('Deleted comment successfully!');
     } catch (error: any) {
       messageApi.error('Failed to delete comment:', error.response?.data?.message);
     }
+    setIsDeleting(false);
   };
+
+  useImperativeHandle(ref, () => ({
+    clearReplies: () => {
+      repliesListRef.current?.clearAllComments();
+      setShowReplies(false);
+    },
+  }));
 
   return (
     <CommentItemStyle>
-      <Card>
+      <Card style={{ opacity: disabled || isDeleting ? 0.3 : 1 }}>
+        {disabled || (isDeleting && <div className='comment-item-disabled-cover'></div>)}
         <Card.Meta
           title={
-            <>
-              <span>{commentData.user.fullName}</span>
-              <span className='comment-item-subtitle'>
-                {' '}
-                • {formateDateTimeByLocale(new Date(commentData.updateTimestamp))}
-              </span>
-              {commentData.updateTimestamp !== commentData.createTimestamp && (
+            <Flex justify='space-between'>
+              <div>
+                <span>{comment.user.fullName}</span>
                 <span className='comment-item-subtitle'>
                   {' '}
-                  • Edited at {formateDateTimeByLocale(new Date(commentData.updateTimestamp))}
+                  • {formateDateTimeByLocale(new Date(comment.updateTimestamp))}
                 </span>
+                {comment.updateTimestamp !== comment.createTimestamp && (
+                  <span className='comment-item-subtitle'>
+                    {' '}
+                    • Edited at {formateDateTimeByLocale(new Date(comment.updateTimestamp))}
+                  </span>
+                )}
+              </div>
+              {isEditing || (
+                <CommentItemMoreActions
+                  disabled={disabled || isDeleting || isVoting}
+                  comment={comment}
+                  onDeleteClick={() => setIsDeleteModalVisible(true)}
+                  onEditClick={() => {
+                    handleCloseReplyForm();
+                    setIsEditing(true);
+                  }}
+                />
               )}
-            </>
+            </Flex>
           }
         />
         <div className='comment-item-content'>
           {!isEditing ? (
-            commentData.content
+            comment.content
           ) : (
             <CommentTextarea
               operation='UPDATE'
-              blogCommentIdUpdate={commentData.blogCommentId}
-              initialContent={commentData.content}
+              blogCommentIdUpdate={comment.blogCommentId}
+              initialContent={comment.content}
               showDismissButton
               onDismiss={() => setIsEditing(false)}
               onSubmitSuccess={(submittedComment) => {
-                setCommentData(submittedComment);
+                onUpdateComment?.(submittedComment);
                 setIsEditing(false);
               }}
             />
@@ -191,147 +201,123 @@ export default function CommentItem({ comment, onReloadReplies }: CommentProps) 
             <div className='vote-btn-container'>
               <Tooltip
                 placement='bottom'
-                title={
-                  !user
-                    ? 'Login to upvote this comment'
-                    : commentData.votes.userStatus === VoteUserStatus.UP_VOTE
-                      ? 'Cancel upvote this comment'
-                      : 'Upvote this comment'
-                }
+                title={getUpvoteButtonTooltipTitle({
+                  isLoggedIn,
+                  hasVoted: comment.votes.userStatus === VoteUserStatus.UP_VOTE,
+                  disabled: isVoting,
+                })}
               >
-                <UpvoteButton
+                <ThumbsUp
+                  size={18}
                   className={clsx({
-                    activated: commentData.votes.userStatus === VoteUserStatus.UP_VOTE,
+                    activated: isLoggedIn && comment.votes.userStatus === VoteUserStatus.UP_VOTE,
                     disabled: isVoting,
                   })}
                   onClick={() =>
                     handleVoteComment(
-                      commentData.votes.userStatus === VoteUserStatus.UP_VOTE
+                      comment.votes.userStatus === VoteUserStatus.UP_VOTE
                         ? VoteAction.CANCEL
                         : VoteAction.UP_VOTE,
                     )
                   }
                 />
               </Tooltip>
-              {commentData.votes.upVote != 0 && <span>{commentData.votes.upVote}</span>}
+              {isLoggedIn && comment.votes.upVote != 0 && <span>{comment.votes.upVote}</span>}
             </div>
             <div className='vote-btn-container'>
               <Tooltip
                 placement='bottom'
-                title={
-                  !user
-                    ? 'Login to downvote this comment'
-                    : commentData.votes.userStatus === VoteUserStatus.DOWN_VOTE
-                      ? 'Cancel downvote this comment'
-                      : 'Downvote this comment'
-                }
+                title={getDownvoteButtonTooltipTitle({
+                  isLoggedIn,
+                  hasVoted: comment.votes.userStatus === VoteUserStatus.DOWN_VOTE,
+                  disabled: isVoting,
+                })}
               >
-                <DownvoteButton
+                <ThumbsDown
+                  size={18}
                   className={clsx({
-                    activated: commentData.votes.userStatus === VoteUserStatus.DOWN_VOTE,
+                    activated: isLoggedIn && comment.votes.userStatus === VoteUserStatus.DOWN_VOTE,
                     disabled: isVoting,
                   })}
-                  disabled={isVoting}
                   onClick={() =>
                     handleVoteComment(
-                      commentData.votes.userStatus === VoteUserStatus.DOWN_VOTE
+                      comment.votes.userStatus === VoteUserStatus.DOWN_VOTE
                         ? VoteAction.CANCEL
                         : VoteAction.DOWN_VOTE,
                     )
                   }
                 />
               </Tooltip>
-              {commentData.votes.downVote != 0 && <span>{commentData.votes.downVote}</span>}
+              {isLoggedIn && comment.votes.downVote != 0 && <span>{comment.votes.downVote}</span>}
             </div>
             <div>
-              <Tooltip placement='bottom' title='Reply this comment'>
-                <CommentOutlined
+              <Tooltip placement='bottom' title={isVoting ? '' : 'Reply this comment'}>
+                <MessageCircleMore
+                  size={18}
                   className={clsx({ activated: showReplyForm, disabled: isVoting })}
                   onClick={handleToggleReplyForm}
                 />
               </Tooltip>
             </div>
-            {user?.userId !== commentData.userId && (
-              <div>
-                <Tooltip placement='bottom' title='Report this comment'>
-                  <FlagOutlined className={clsx({ disabled: isVoting })} />
-                </Tooltip>
-              </div>
-            )}
-            {user?.userId === commentData.userId && (
-              <>
-                <div>
-                  <Tooltip placement='bottom' title='Edit this comment'>
-                    <EditOutlined
-                      className={clsx({ disabled: isVoting })}
-                      onClick={() => setIsEditing(true)}
-                    />
-                  </Tooltip>
-                </div>
-                <div>
-                  <Tooltip placement='bottom' title='Delete this comment'>
-                    <DeleteOutlined
-                      className={clsx({ disabled: isVoting })}
-                      onClick={() => setIsDeleteModalVisible(true)}
-                    />
-                  </Tooltip>
-                </div>
-              </>
-            )}
           </div>
         )}
         {showReplyForm && (
           <CommentTextarea
             operation='REPLY'
-            blogCommentIdReplyTo={commentData.blogCommentId}
+            blogCommentIdReplyTo={comment.blogCommentId}
             showDismissButton
             onDismiss={handleCloseReplyForm}
-            onSubmitSuccess={handleSuccessReply}
+            onSubmitSuccess={handleReplySuccess}
           />
         )}
       </Card>
+      {comment.countReplies > 0 && !showReplies && (
+        <Button
+          type='text'
+          className='show-reply-btn'
+          size='large'
+          disabled={isLoadingReplies || disabled || isDeleting}
+          onClick={handleShowReplies}
+          style={{ marginTop: '1rem' }}
+        >
+          {isLoadingReplies ? (
+            <LoadingIndicator />
+          ) : (
+            <div>
+              <DownOutlined /> View {comment.countReplies} {comment.countReplies > 1 ? 'replies' : 'reply'}
+            </div>
+          )}
+        </Button>
+      )}
+      {showReplies && comment.countReplies > 0 && (
+        <Button
+          type='text'
+          className='show-reply-btn'
+          size='large'
+          disabled={isLoadingReplies || disabled || isDeleting}
+          onClick={toggleRepliesHidden}
+          style={{ marginTop: '1rem' }}
+        >
+          {isRepliesHidden ? (
+            <div>
+              <DownOutlined /> View {comment.countReplies} {comment.countReplies > 1 ? 'replies' : 'reply'}
+            </div>
+          ) : (
+            <div>
+              <UpOutlined /> Hide replies
+            </div>
+          )}
+        </Button>
+      )}
 
-      <div style={{ marginTop: '1rem', marginBottom: '3rem' }}>
+      <div style={{ marginTop: '1rem', marginBottom: comment.replyTo === null ? '3rem' : '2rem' }}>
         <CommentList
-          comments={replies}
-          style={{ borderLeft: '1px solid white', paddingLeft: '5rem' }}
-          onReloadReplies={handleReloadReplies}
+          ref={repliesListRef}
+          style={{ borderLeft: '1px solid white', paddingLeft: '3.5rem' }}
+          replyTo={comment.blogCommentId}
+          itemDisabled={disabled || isDeleting}
+          hidden={isRepliesHidden}
         />
-        {!showReplies && commentData.countReplies > 0 && (
-          <Button
-            type='text'
-            className='show-reply-btn'
-            size='large'
-            onClick={() => handleShowNextPageOfReplies()}
-            disabled={isLoadingReplies}
-          >
-            {isLoadingReplies ? (
-              <LoadingIndicator />
-            ) : (
-              <div>
-                <DownOutlined /> View {commentData.countReplies}{' '}
-                {commentData.countReplies > 1 ? 'replies' : 'reply'}
-              </div>
-            )}
-          </Button>
-        )}
-        {canLoadMoreReplies && showReplies && (
-          <Button
-            type='text'
-            className='show-reply-btn'
-            size='large'
-            onClick={() => handleShowNextPageOfReplies()}
-            disabled={isLoadingReplies}
-          >
-            {isLoadingReplies ? (
-              <LoadingIndicator />
-            ) : (
-              <div>
-                <DownOutlined /> View more replies
-              </div>
-            )}
-          </Button>
-        )}
       </div>
       <Modal
         centered
@@ -342,6 +328,23 @@ export default function CommentItem({ comment, onReloadReplies }: CommentProps) 
       >
         <p>Are you sure you want to delete this comment?</p>
       </Modal>
+      <AuthModal open={openLoginModal} onClose={() => setOpenLoginModal(false)} />
     </CommentItemStyle>
   );
 }
+
+function getUpvoteButtonTooltipTitle(args: { isLoggedIn: boolean; hasVoted: boolean; disabled: boolean }) {
+  if (!args.isLoggedIn) return 'Login to upvote this comment';
+  if (args.disabled) return '';
+  if (args.hasVoted) return 'Cancel upvote this comment';
+  return 'Upvote this comment';
+}
+
+function getDownvoteButtonTooltipTitle(args: { isLoggedIn: boolean; hasVoted: boolean; disabled: boolean }) {
+  if (!args.isLoggedIn) return 'Login to downvote this comment';
+  if (args.disabled) return '';
+  if (args.hasVoted) return 'Cancel downvote this comment';
+  return 'Downvote this comment';
+}
+
+export default forwardRef(CommentItem);

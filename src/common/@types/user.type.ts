@@ -3,4 +3,5 @@ export interface User {
   avatar?: string;
   description?: string;
   userId: string;
+  uid: string;
 }

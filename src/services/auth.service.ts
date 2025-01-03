@@ -10,7 +10,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   UserCredential,
-} from '@firebase/auth';
+} from 'firebase/auth';
 import { EAuthProvider, EToken } from '@/common/enums/app.enum';
 import { IFormLoginRegister } from '@/components/page/auth/FormLoginRegister/FormLoginRegister';
 import { ENotification, openNotification } from '@/common/utils/notification.util';
@@ -83,7 +83,6 @@ class AuthService {
       }
       window.location.href = currentUrl ? currentUrl : '/';
     } catch (e: any) {
-      console.log(e.code);
       switch (e.code) {
         case EFirebaseError.INVALID_CREDENTIAL:
           openNotification({
@@ -112,12 +111,11 @@ class AuthService {
         data.form?.password as string,
       );
       credential = {
-        accessToken: await result.user.getIdToken(),
+        accessToken: await result?.user.getIdToken(),
       } as OAuthCredential;
 
       window.location.href = '/';
     } catch (e: any) {
-      console.log(e.code);
       switch (e.code) {
         case EFirebaseError.INVALID_CREDENTIAL:
           openNotification({
@@ -171,10 +169,8 @@ class AuthService {
         },
         body: `grant_type=refresh_token&refresh_token=${refreshToken}`,
       });
-      console.log(response);
 
       const token = await this.auth.currentUser?.getIdToken(true);
-      console.log('Token ', token);
       if (!token) {
         await this.signOut();
         return;

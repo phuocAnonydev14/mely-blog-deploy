@@ -18,8 +18,9 @@ const CommentTextareaStyle = styled.div`
     }
 
     & textarea {
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       padding: 1rem;
+      resize: none;
     }
   }
 
@@ -30,7 +31,7 @@ const CommentTextareaStyle = styled.div`
     align-items: center;
     font-size: 1.8rem;
     gap: 2rem;
-    margin-block: 6rem;
+    margin-block: 3rem;
   }
 
   .dismiss-comment-btn {

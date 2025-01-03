@@ -64,7 +64,15 @@ export default function Profile({ userId }: ProfileProps) {
         hoverable
         className={'card-profile'}
         cover={
-          <Image alt='bg' className={'bg-image'} style={{ filter: 'blur(5px)' }} src={user?.avatar || ''} />
+          <img
+            alt='bg'
+            className={'bg-image'}
+            style={{ filter: 'blur(5px)' }}
+            src={
+              user?.avatar ||
+              'https://images.unsplash.com/photo-1731493710740-136a5ce91c57?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxN3x8fGVufDB8fHx8fA%3D%3D'
+            }
+          />
         }
         actions={
           isOwner
@@ -79,7 +87,14 @@ export default function Profile({ userId }: ProfileProps) {
             : undefined
         }
       >
-        <Avatar className={'avatar'} src={user?.avatar} size={80} />
+        <Avatar
+          className={'avatar'}
+          src={
+            user?.avatar ||
+            'https://images.unsplash.com/photo-1731493710740-136a5ce91c57?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxN3x8fGVufDB8fHx8fA%3D%3D'
+          }
+          size={80}
+        />
 
         <div style={{ padding: '16px' }}></div>
         <Meta

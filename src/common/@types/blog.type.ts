@@ -1,5 +1,5 @@
 import { CommonFields } from '@/common/@types/commonFields.type';
-import { BlogTypeCode, VoteUserStatus } from '@/common/enums/blog.enum';
+import { BlogTypeCode, VoteAction, VoteUserStatus } from '@/common/enums/blog.enum';
 import { User } from '@/common/@types/user.type';
 
 export interface Blog extends CommonFields {
@@ -13,6 +13,11 @@ export interface Blog extends CommonFields {
   image?: string;
   user?: User;
   votes?: BlogVote;
+}
+
+export interface BlogUserStatus {
+  voteStatus: VoteAction;
+  bookmarkCate: string;
 }
 
 export enum BlogVoteActionEnum {
@@ -30,7 +35,6 @@ export interface BlogVote {
 export interface Category extends CommonFields {
   categoryId: string;
   name?: string;
-  iconCode?: string;
   approvalStatus?: boolean | null;
 }
 

@@ -21,15 +21,14 @@ export interface IFormLoginRegister {
   retypePassword?: string;
 }
 
-const FormLoginRegister = ({
-  url,
-  currentUrl,
-  isModal,
-}: {
+interface FormLoginRegisterProps {
   url: string;
   currentUrl?: string;
   isModal?: boolean;
-}) => {
+  reloadCurrentPageOnSuccess?: boolean;
+}
+
+const FormLoginRegister = ({ url, currentUrl, isModal }: FormLoginRegisterProps) => {
   const [isLogin, setIsLogin] = useState(url === LOGIN);
   const [isLoading, setIsLoading] = useState(false);
   const [content, setContent] = useState({
@@ -91,7 +90,7 @@ const FormLoginRegister = ({
           {content.title}
         </Typography.Title>
         <Item>
-          <ButtonGroup />
+          <ButtonGroup currentUrl={currentUrl} />
         </Item>
         <Divider lineColor={'#ffffff'} textColor={'#ffffff'}>
           or

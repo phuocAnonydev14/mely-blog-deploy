@@ -19,32 +19,13 @@ const Home = (props: BlogHomeProps) => {
   const { blogs, trendingBlog } = props;
   const isMobile = useMediaQuery(`(max-width: ${breakpoints.lg})`);
 
-  console.log(trendingBlog);
   if (!trendingBlog) return <></>;
 
   return (
     <HomeStyle>
       <div className='home-container' id='home-scroll-parent'>
         <Row>
-          <Col
-            lg={{ span: 4 }}
-            xxl={3}
-            md={{ span: 0 }}
-            style={{
-              borderRight: '1px solid rgba(70, 70, 70, 0.83)',
-              position: 'relative',
-              overflow: 'hidden',
-            }}
-          >
-            <div
-              hidden={isMobile}
-              style={{ maxWidth: isMobile ? '10rem' : '22rem' }}
-              className='home-container_navbar'
-            >
-              <BlogNav />
-            </div>
-          </Col>
-          <Col xxl={21} lg={20} md={24}>
+          <Col span={24}>
             <div className='home-container_items' id='home-scroll-child'>
               <Typography.Title level={3} className='mb-5'>
                 Top blog posts

@@ -19,7 +19,7 @@ const Dropdown = () => {
     items: [
       {
         key: '1',
-        label: <Link href={userId || ''}>My Profile</Link>,
+        label: <Link href={`/${userId}` || ''}>My Profile</Link>,
         icon: <Icon path={mdiBadgeAccount} size={1} />,
       },
       {

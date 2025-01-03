@@ -13,27 +13,31 @@ export interface IButtonAction {
   action?: () => void | Promise<void>;
 }
 
-export const ButtonGroup = () => {
+interface ButtonGroupProps {
+  currentUrl?: string;
+}
+
+export const ButtonGroup = ({ currentUrl }: ButtonGroupProps) => {
   const btns: IButtonAction[] = [
     {
       id: EAuthProvider.GOOGLE,
       icon: <Icon path={mdiGoogle} size={1.5} />,
       action: async () => {
-        await authService.signIn({ provider: EAuthProvider.GOOGLE });
+        await authService.signIn({ provider: EAuthProvider.GOOGLE }, currentUrl);
       },
     },
     {
       id: EAuthProvider.FACEBOOK,
       icon: <Icon path={mdiFacebook} size={1.5} />,
       action: async () => {
-        await authService.signIn({ provider: EAuthProvider.FACEBOOK });
+        await authService.signIn({ provider: EAuthProvider.FACEBOOK }, currentUrl);
       },
     },
     {
       id: EAuthProvider.GITHUB,
       icon: <Icon path={mdiGithub} size={1.5} />,
       action: async () => {
-        await authService.signIn({ provider: EAuthProvider.GITHUB });
+        await authService.signIn({ provider: EAuthProvider.GITHUB }, currentUrl);
       },
     },
   ];

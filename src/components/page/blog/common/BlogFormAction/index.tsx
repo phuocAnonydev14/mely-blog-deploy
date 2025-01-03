@@ -13,14 +13,18 @@ import { CategorySelector } from '@/components/common/Select/CategorySelector';
 import { AddBlogDefault } from '@/components/page/blog/common/BlogFormAction/AddBlogDefault';
 import { defaultField, useBlogFormAction } from '@/hooks/useBlogFormAction';
 
-const MAX_TITLE_CHARACTERS_COUNT = 255;
+interface BlogFormActionProps {
+  action: 'edit' | 'create';
+  blog?: Blog;
+}
 
-const BlogFormAction = ({ action, blog }: { action: 'edit' | 'create'; blog?: Blog }) => {
+const BlogFormAction = ({ action, blog }: BlogFormActionProps) => {
   const [{ field, isSubmitting }, { handleUpdateField, handleSubmit, handleSetInitField, handleSetField }] =
     useBlogFormAction(action, blog);
   const isEditBlog = action === 'edit';
   const isMobile = useMediaQuery(`(max-width: ${breakpoints.md})`);
   const [postMode, setPostMode] = useState(BlogTypeCode.DEFAULT);
+
   useEffect(() => {
     if (blog) {
       const field = {
@@ -36,8 +40,6 @@ const BlogFormAction = ({ action, blog }: { action: 'edit' | 'create'; blog?: Bl
       blog.blogTypeCode && setPostMode(blog.blogTypeCode);
     }
   }, [blog]);
-
-  console.log('blog', blog);
 
   return (
     <BlogFormActionStyle>
@@ -75,39 +77,14 @@ const BlogFormAction = ({ action, blog }: { action: 'edit' | 'create'; blog?: Bl
                 blogTypeCode={field.blogTypeCode}
                 handleUpdateField={handleSetField}
               />
-              {/*<Advertisement/>*/}
             </div>
           )}
+          <h2 style={{ fontSize: '20px', marginBottom: 12, fontWeight: 600 }}>Select categories: </h2>
           <CategorySelector
             setTagIdsList={(val) => handleUpdateField('tagIdsList', val)}
             tagIdsList={field.tagIdsList}
+            allowAddNew
           />
-          {/*	<Col*/}
-          {/*		md={24}*/}
-          {/*		lg={6}*/}
-          {/*		className='right-bar'*/}
-          {/*		style={{overflow: 'hidden', paddingInline: !isMobile ? '3rem 0' : '1rem'}}*/}
-          {/*	>*/}
-          {/*		{!isMobile && (*/}
-          {/*			<Flex vertical className='buttons-group' gap='small'>*/}
-          {/*				<Button type='primary' loading={isSubmitting} onClick={handleSubmit}>*/}
-          {/*					{isEditBlog ? 'Edit' : 'Publish'}*/}
-          {/*				</Button>*/}
-          {/*				<Button type='default'>Save as draft</Button>*/}
-          {/*			</Flex>*/}
-          {/*		)}*/}
-          {/*		<CategorySelector*/}
-          {/*			setTagIdsList={(val) => handleUpdateField('tagIdsList', val)}*/}
-          {/*			tagIdsList={field.tagIdsList}*/}
-          {/*		/>*/}
-          {/*		<LinkRef*/}
-          {/*			link={field.link}*/}
-          {/*			description={field.description}*/}
-          {/*			blogTypeCode={field.blogTypeCode}*/}
-          {/*			handleUpdateField={handleUpdateField}*/}
-          {/*		/>*/}
-          {/*		<Advertisement/>*/}
-          {/*	</Col>*/}
         </Col>
         <Col md={24} lg={14} style={{ direction: 'rtl' }}>
           <Button

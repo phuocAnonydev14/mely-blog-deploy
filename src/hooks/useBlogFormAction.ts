@@ -5,10 +5,10 @@ import blogService from '@/services/BlogService';
 import { BlogTypeCode } from '@/common/enums/blog.enum';
 import { message } from 'antd';
 import { cleanObject } from '@/common/utils/cleanObject';
-import { useRouter } from 'next/navigation';
 import { Blog } from '@/common/@types/blog.type';
 import { format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
+import { useRouter } from 'next-nprogress-bar';
 
 export const defaultField = {
   tempFileIdsList: '',
@@ -61,7 +61,6 @@ export const useBlogFormAction = (action: 'edit' | 'create', currentBlog?: Blog)
       }
       switch (action) {
         case 'create': {
-          console.log('start create');
           const res = await blogService.create(dispatchField);
           console.log(res);
           setField(defaultField);
@@ -74,7 +73,6 @@ export const useBlogFormAction = (action: 'edit' | 'create', currentBlog?: Blog)
           const utcDate = new Date(currentBlog.createTimestamp);
           const zonedDate = toZonedTime(utcDate, timeZone);
           const formattedDate = format(zonedDate, 'yyyy-MM-dd HH:mm:ss.SSSXXX');
-          console.log('start edit');
           const res = await blogService.updateBlog(currentBlog.blogId, {
             ...field,
             // updateTimestamp:formattedDate,

@@ -9,6 +9,8 @@ import useBlog from '@/hooks/useBlog';
 import { Comment } from '@/common/@types/blog.type';
 import CommentTextareaStyle from '@/components/common/CommentTextarea/CommentTextarea.style';
 import useAntMessage from '@/hooks/useAntMessage';
+import { AuthModal } from '@/components/page/auth/AuthModal';
+import clsx from 'clsx';
 
 interface CommentTextareaProps {
   initialContent?: string;
@@ -18,6 +20,7 @@ interface CommentTextareaProps {
   onDismiss?: () => void;
   onSubmitSuccess?: (submittedComment: Comment) => void | Promise<void>;
   operation: 'CREATE' | 'REPLY' | 'UPDATE';
+  className?: string;
 }
 
 export default function CommentTextarea({
@@ -28,9 +31,11 @@ export default function CommentTextarea({
   onDismiss,
   onSubmitSuccess,
   showDismissButton = false,
+  className,
 }: CommentTextareaProps) {
   const [content, setContent] = useState(initialContent ?? '');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [openLoginModal, setOpenLoginModal] = useState(false);
   const { user } = useUser();
   const { blog } = useBlog();
   const messageApi = useAntMessage();
@@ -70,12 +75,12 @@ export default function CommentTextarea({
       {!user ? (
         <div className='blog-comments-login-prompt'>
           <p>Please login to submit your comments.</p>
-          <Link href='/auth/login'>
-            <Button type='primary'>Login</Button>
-          </Link>
+          <Button type='primary' onClick={() => setOpenLoginModal(true)}>
+            Login
+          </Button>
         </div>
       ) : (
-        <Form className='blog-comments-form'>
+        <Form className={clsx('blog-comments-form', className)}>
           {operation !== 'UPDATE' && (
             <Form.Item>
               <Image
@@ -87,8 +92,8 @@ export default function CommentTextarea({
               />
             </Form.Item>
           )}
-          <Form.Item className='blog-comments-textarea'>
-            <Input.TextArea rows={4} value={content} onChange={(e) => setContent(e.target.value)} />
+          <div className='blog-comments-textarea'>
+            <Input.TextArea rows={3} value={content} onChange={(e) => setContent(e.target.value)} />
             <Button
               type='primary'
               disabled={content.trim().length === 0 || isSubmitting}
@@ -110,9 +115,11 @@ export default function CommentTextarea({
                 Dismiss
               </Button>
             )}
-          </Form.Item>
+          </div>
         </Form>
       )}
+
+      <AuthModal open={openLoginModal} onClose={() => setOpenLoginModal(false)} />
     </CommentTextareaStyle>
   );
 }

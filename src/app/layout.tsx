@@ -4,9 +4,9 @@ import { Inter } from 'next/font/google';
 
 import AppProvider from '@/common/providers/AppProvider';
 import GlobalStyleProvider from '@/common/providers/GlobalStyleProvider';
-import 'antd-css-utilities/utility.min.css';
 import Head from 'next/head';
 import Script from 'next/script';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,9 +27,11 @@ export default function RootLayout({ children }: Readonly<PropsWithChildren>) {
         />
       </Head>
       <body className={inter.className}>
-        <AppProvider>
-          <GlobalStyleProvider>{children}</GlobalStyleProvider>
-        </AppProvider>
+        <NuqsAdapter>
+          <AppProvider>
+            <GlobalStyleProvider>{children}</GlobalStyleProvider>
+          </AppProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

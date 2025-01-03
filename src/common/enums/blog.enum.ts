@@ -7,6 +7,7 @@ enum VoteAction {
   UP_VOTE = 0,
   DOWN_VOTE = 1,
   CANCEL = 2,
+  NOT_VOTE_YET = 3,
 }
 
 enum VoteUserStatus {

@@ -3,11 +3,11 @@ import { Col, Form, Input, Row } from 'antd';
 import { BlogTypeCode } from '@/common/enums/blog.enum';
 import { useForm } from 'antd/es/form/Form';
 import { useEffect, useState } from 'react';
-import { useDebounce } from 'use-debounce';
 import axios from 'axios';
 import Link from 'next/link';
 import { BlogField } from '@/hooks/useBlogFormAction';
 import { urlToFile } from '@/helpers/urlToFile';
+import { useDebounceValue } from 'usehooks-ts';
 
 interface LinkRefProps {
   link: string;
@@ -31,7 +31,7 @@ export const LinkRef = (props: LinkRefProps) => {
     description: '',
   });
   const [form] = useForm();
-  const [linkDebounce] = useDebounce(form.getFieldValue('link'), 1000);
+  const [linkDebounce] = useDebounceValue(form.getFieldValue('link'), 1000);
 
   const handleTriggerOnChangeValue = (field: string) => {
     setTimeout(() => {

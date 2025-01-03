@@ -1,8 +1,3 @@
 import { IPagination } from '@/common/@types/pagination.type';
 
-export interface ResponseData<T> {
-  data: T;
-  meta?: {
-    pagination: IPagination;
-  };
-}
+export type ResponseData<T> = T extends any[] ? { data: T; meta: { pagination: IPagination } } : { data: T };

@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import blogApiService from '@/services/BlogService';
-import Head from 'next/head';
 import Home from '@/components/page/home';
 import { Blog } from '@/common/@types/blog.type';
 
@@ -10,6 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
+  /**
+   * Fetches blog data and trending blog data from the blog API service.
+   * @returns An object containing the blog data and trending blog data.
+   */
   const handleFetchBlog = async () => {
     try {
       const blogs = await blogApiService.getAllBlog({ page: '1', pageSize: '20' });
@@ -34,3 +37,5 @@ export default async function HomePage() {
     </>
   );
 }
+
+export const revalidate = 10; //revalidate every 10 seconds

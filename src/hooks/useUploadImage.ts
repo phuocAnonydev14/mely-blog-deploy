@@ -19,6 +19,7 @@ export const MAX_SIZE_IN_BYTES = 1 * 1024 ** 2;
 export default function useImageUpload({
   currentTempFile,
   setCurrentTempFile,
+  setImageUrlCustom,
 }: DraggableImageUploadProps): UseImageUploadValue {
   const [isUploading, setIsUploading] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
@@ -72,6 +73,7 @@ export default function useImageUpload({
         formData.append('eventId', '00');
         const res = (await blogService.addTempFile(formData)) as any;
         setCurrentTempFile(res?.data?.id);
+        setImageUrlCustom && setImageUrlCustom(res.data.fileName);
         setImageUrl(res?.data?.url);
         onSuccess?.(res.data);
       }

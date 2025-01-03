@@ -6,13 +6,14 @@ import GlobalStyleContext from '@/common/contexts/GlobalStyleContext';
 import '@/common/styles/reset.css';
 import '@/common/styles/colors.css';
 import '@/common/styles/ckeditor.css';
+import '@/common/styles/globals.css';
 // import 'highlight.js/styles/github-dark.min.css';
 import AntThemeProvider from '@/common/providers/AntThemeProvider';
 
 export default function GlobalStyleProvider({ children }: PropsWithChildren) {
   return (
     <GlobalStyleContext.Provider value={null}>
-      <NextThemeProvider>
+      <NextThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
         <AntThemeProvider>{children}</AntThemeProvider>
       </NextThemeProvider>
     </GlobalStyleContext.Provider>

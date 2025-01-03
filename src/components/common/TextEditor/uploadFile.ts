@@ -36,7 +36,6 @@ export class CustomUploadAdapter implements UploadAdapter {
     formData.append('file', file);
     formData.append('eventId', '01');
     const res = await blogService.addTempFile(formData);
-    console.log('res', res);
     return { default: res.data.url };
   }
 }

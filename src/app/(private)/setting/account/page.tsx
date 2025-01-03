@@ -24,9 +24,10 @@ const UserEditPage = () => {
       avatar: user.avatar ?? '',
     });
   }, [user]);
-  const setCurrentFile = (value: any) => {
-    console.log(value);
+  const setCurrentFile = (value: string) => {
+    form.setFieldsValue({ avatar: value });
   };
+
   const onFinish = async (values: IUser) => {
     await updateUser({
       ...values,
@@ -61,8 +62,9 @@ const UserEditPage = () => {
           >
             <DraggableImageUpload
               currentTempFile={user?.avatar ?? ''}
-              setCurrentTempFile={setCurrentFile}
+              setCurrentTempFile={() => {}}
               url={user?.avatar}
+              setImageUrlCustom={setCurrentFile}
             />
           </Form.Item>
           <Flex justify={'space-between'}>

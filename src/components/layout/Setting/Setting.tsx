@@ -1,8 +1,8 @@
 'use client';
 import { SettingStyle } from '@/components/layout/Setting/setting.style';
-import { useRouter } from 'next/navigation';
 import Icon from '@mdi/react';
 import { mdiAccountBox, mdiBellOutline, mdiCog, mdiSecurity } from '@mdi/js';
+import { useRouter } from 'next-nprogress-bar';
 
 const getTabList = () => {
   return [

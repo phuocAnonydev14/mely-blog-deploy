@@ -2,8 +2,14 @@ import React from 'react';
 import blogService from '@/services/BlogService';
 import BlogFormAction from '@/components/page/blog/common/BlogFormAction';
 
-const EditPostPage = async ({ params }: { params: Record<any, any> }) => {
-  const { postId } = params;
+interface EditPostPageProps {
+  params: Promise<{
+    postId: string;
+  }>;
+}
+
+const EditPostPage = async ({ params }: EditPostPageProps) => {
+  const { postId } = await params;
   const blog = await blogService.getById(postId);
 
   if (!blog) return;

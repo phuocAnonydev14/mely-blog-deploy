@@ -1,15 +1,11 @@
-import { Blog, Comment } from '@/common/@types/blog.type';
-import { BlogCommentOrder } from '@/common/enums/blog-comment-order.enum';
+import { Blog, BlogUserStatus } from '@/common/@types/blog.type';
 import { Dispatch, SetStateAction, createContext } from 'react';
 
 export interface BlogContextValue {
   blog: Blog;
-  rootComments: Comment[];
-  setRootComments: Dispatch<SetStateAction<Comment[]>>;
   setBlog: Dispatch<SetStateAction<Blog>>;
-  commentsOrder: BlogCommentOrder;
-  setCommentsOrder: Dispatch<SetStateAction<BlogCommentOrder>>;
-  isLoadingRootComments: boolean;
+  blogUserStatus: BlogUserStatus | null;
+  setBlogUserStatus: Dispatch<SetStateAction<BlogUserStatus | null>>;
 }
 
 const BlogContext = createContext<BlogContextValue | null>(null);

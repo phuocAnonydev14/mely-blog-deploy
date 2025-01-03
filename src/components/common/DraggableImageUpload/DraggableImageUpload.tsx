@@ -10,6 +10,7 @@ export interface DraggableImageUploadProps {
   setCurrentTempFile: (val: string) => void;
   url?: string;
   isEdit?: boolean;
+  setImageUrlCustom?: (val: string) => void;
 }
 
 export default function DraggableImageUpload(props: DraggableImageUploadProps) {

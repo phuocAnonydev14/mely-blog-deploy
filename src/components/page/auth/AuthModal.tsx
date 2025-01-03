@@ -12,6 +12,7 @@ interface FormModalProps {
 
 export const AuthModal = ({ onClose, open }: FormModalProps) => {
   const pathname = usePathname();
+
   return (
     <Modal
       className=''
