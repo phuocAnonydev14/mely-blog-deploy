@@ -2,7 +2,14 @@ import styled from 'styled-components';
 const BlockItemStyle = styled.div`
   height: 100%;
   width: 100%;
-  padding-bottom: 5px;
+  border: 1px solid rgba(63, 63, 63, 0.74);
+  border-radius: 10px;
+  overflow: hidden;
+
+  &:hover {
+    border: 1px solid rgba(111, 111, 111, 0.74);
+    transition: all 0.3s ease-in-out;
+  }
 
   //&:hover {
   //  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
@@ -19,12 +26,13 @@ const BlockItemStyle = styled.div`
     object-fit: cover;
   }
 
-  .content {
+  .content-box {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     justify-content: space-between;
     flex-grow: 1;
+    padding: 20px;
 
     .time {
       color: #6941c6;

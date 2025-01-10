@@ -3,6 +3,7 @@ import styled from 'styled-components';
 const BlogFormActionStyle = styled.section`
   & {
     padding-top: 3rem;
+    padding-inline: 10px;
   }
 
   h1 {

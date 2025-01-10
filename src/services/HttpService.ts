@@ -86,7 +86,7 @@ class HttpService {
       url,
       ...options,
     });
-    return response.data;
+    return response?.data || ({} as T);
   }
 
   // Perform GET request

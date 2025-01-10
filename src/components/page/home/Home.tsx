@@ -17,7 +17,6 @@ export interface BlogHomeProps {
 
 const Home = (props: BlogHomeProps) => {
   const { blogs, trendingBlog } = props;
-  const isMobile = useMediaQuery(`(max-width: ${breakpoints.lg})`);
 
   if (!trendingBlog) return <></>;
 
@@ -35,7 +34,7 @@ const Home = (props: BlogHomeProps) => {
                   {trendingBlog[0] && <BlogItem dir='col' post={trendingBlog[0]} />}
                 </Col>
                 <Col sm={{ span: 24 }} md={{ span: 12 }}>
-                  <div className='w-full flex flex-col gap-16'>
+                  <div className='w-full flex flex-col gap-10'>
                     {trendingBlog[1] && <BlogItem dir='row' post={trendingBlog[1]} />}
                     {trendingBlog[2] && <BlogItem dir='row' post={trendingBlog[2]} />}
                   </div>

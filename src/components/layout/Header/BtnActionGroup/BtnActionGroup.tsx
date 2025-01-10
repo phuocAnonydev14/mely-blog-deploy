@@ -12,6 +12,7 @@ import { Notification } from '@/components/layout/Header';
 import Dropdown from '@/components/layout/Header/Dropdown';
 import useUser from '@/hooks/useUser';
 import { useRouter } from 'next-nprogress-bar';
+import { cn } from '@/lib/utils';
 
 export default function BtnActionGroup() {
   const { isLoggedIn, isLoading } = useUser();
@@ -32,14 +33,15 @@ export default function BtnActionGroup() {
   }
 
   return (
-    <BtnActionGroupStyle gap={20} justify='end' align='center'>
+    <BtnActionGroupStyle gap={isMobile ? 10 : 20} justify='end' align='center'>
       <Button
         color={EButtonTheme.SECONDARY}
         type='default'
         icon={<PlusOutlined />}
+        className={`flex justify-center items-center ${isMobile && '!p-3'}`}
         onClick={() => router.push('/blog/create')}
       >
-        {!isMobile && 'Create post'}
+        {!isMobile && <span> Create post</span>}
       </Button>
       <Notification />
       <Dropdown />

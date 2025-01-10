@@ -59,7 +59,7 @@ const BlogItem = (props: Props) => {
   }, []);
 
   return (
-    <BlockItemStyle key={blogId} className={`flex flex-${dir} gap-16`}>
+    <BlockItemStyle key={blogId} className={`flex flex-${dir} gap-2`}>
       <div
         style={{
           width: dir === 'col' ? '100%' : '50%',
@@ -83,7 +83,7 @@ const BlogItem = (props: Props) => {
           style={{ boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px' }}
         />
       </div>
-      <div className='content' style={{ width: dir === 'col' ? '100%' : '50%' }}>
+      <div className='content-box' style={{ width: dir === 'col' ? '100%' : '50%' }}>
         <span className='time'>{moment(createTimestamp).fromNow()}</span>
         <Link href={`/blog/${post.blogId}`} target={'_self'}>
           <div className='flex justify-between gap-5'>

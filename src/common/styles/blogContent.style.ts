@@ -3,6 +3,7 @@ import { css } from 'styled-components';
 const blogContentStyle = css`
   font-size: 1.8rem;
   line-height: 1.6;
+  background: transparent !important;
 
   h2 {
     font-size: 2em;

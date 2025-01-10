@@ -13,7 +13,6 @@ import Link from '@/components/common/Link/Link';
 import useUser from '@/hooks/useUser';
 import { useEffect, useState } from 'react';
 import userApi, { IUser } from '@/services/UserService';
-import Image from 'next/image';
 
 const { Meta } = Card;
 
@@ -29,8 +28,6 @@ export default function Profile({ userId }: ProfileProps) {
   useEffect(() => {
     (async () => {
       if (isLoading) return;
-
-      console.log('currentSignedInUser', currentSignedInUser);
 
       if (currentSignedInUser && (currentSignedInUser.uid === userId || userId === 'me')) {
         setUser(currentSignedInUser);

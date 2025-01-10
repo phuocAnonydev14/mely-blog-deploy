@@ -44,7 +44,7 @@ const BlogFormAction = ({ action, blog }: BlogFormActionProps) => {
   return (
     <BlogFormActionStyle>
       <Row justify='center' gutter={[0, 20]}>
-        <Col md={24} lg={14}>
+        <Col md={24} span={24} lg={14}>
           <h1>{!isEditBlog ? 'Create' : 'Edit'} Post</h1>
           <>
             {!isEditBlog && (
@@ -58,7 +58,6 @@ const BlogFormAction = ({ action, blog }: BlogFormActionProps) => {
                 }))}
                 onChange={(val) => {
                   setPostMode(val as any);
-                  console.log('val', val);
                   handleSetField({ ...defaultField, blogTypeCode: val as any });
                 }}
               />
@@ -86,7 +85,7 @@ const BlogFormAction = ({ action, blog }: BlogFormActionProps) => {
             allowAddNew
           />
         </Col>
-        <Col md={24} lg={14} style={{ direction: 'rtl' }}>
+        <Col md={24} lg={14} style={{ direction: 'rtl' }} className='md:block hidden'>
           <Button
             type='primary'
             style={{ paddingInline: '50px' }}

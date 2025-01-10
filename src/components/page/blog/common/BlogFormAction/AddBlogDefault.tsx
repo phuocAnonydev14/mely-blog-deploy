@@ -52,6 +52,7 @@ export const AddBlogDefault = ({ field, handleUpdateField, currentBlog }: AddBlo
         </Flex>
       </Col>
       <Col span={24}>
+        {/*// @ts-ignore*/}
         <TextEditor content={field.content} setContent={(val) => handleUpdateField('content', val)} />
       </Col>
     </Row>

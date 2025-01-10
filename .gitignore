@@ -44,5 +44,3 @@ next-env.d.ts
 
 # Project IDX
 .idx/*
-
-.open-next
